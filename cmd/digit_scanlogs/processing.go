@@ -2,8 +2,24 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"path/filepath"
 )
+
+func IsDigitProject(projectPath string) bool {
+	path, err := filepath.Abs(projectPath)
+	if err != nil {
+		log.Println("Error getting absolute path:", err)
+		return false
+	}
+	tiffFiles, err := filepath.Glob(fmt.Sprintf("%s/*.tif", path))
+	if err != nil {
+		log.Println("Error checking for TIFF files:", err)
+		return false
+	}
+	return len(tiffFiles) > 0
+}
 
 func processingScanDirectory(scanDir string) error {
 	projects, err := os.ReadDir(scanDir)
