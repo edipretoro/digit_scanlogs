@@ -21,6 +21,11 @@ func IsDigitProject(projectPath string) bool {
 	return len(tiffFiles) > 0
 }
 
+func processProject(projectPath string) error {
+	fmt.Printf("Processing project at: %s\n", projectPath)
+	return nil
+}
+
 func processingScanDirectory(scanDir string) error {
 	projects, err := os.ReadDir(scanDir)
 	if err != nil {
