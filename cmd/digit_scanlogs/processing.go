@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"github.com/edipretoro/digit_scanlogs/internal/database"
+	"github.com/google/uuid"
 )
 
 func IsDigitProject(projectPath string) bool {
@@ -26,7 +28,7 @@ func processProject(projectPath string) error {
 	return nil
 }
 
-func processingScanDirectory(scanDir string) error {
+func processingScanDirectory(scanDir string, dbQueries *database.Queries) error {
 	projects, err := os.ReadDir(scanDir)
 	if err != nil {
 		return fmt.Errorf("failed to read scan directory: %w", err)
