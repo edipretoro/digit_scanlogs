@@ -24,7 +24,6 @@ func main() {
 		log.Fatalf("Error opening database: %v", err)
 	}
 	defer db.Close()
-	dbQueries := database.New(db)
 	scanDirectory := os.Getenv("DIGIT_SCAN_DIR")
 	if scanDirectory == "" {
 		log.Fatal("DIGIT_SCAN_DIR environment variable is not set")
