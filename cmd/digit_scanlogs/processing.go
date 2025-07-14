@@ -21,7 +21,7 @@ func IsDigitProject(projectPath string) bool {
 		log.Println("Error getting absolute path:", err)
 		return false
 	}
-	tiffFiles, err := filepath.Glob(fmt.Sprintf("%s/*.tif", path))
+	tiffFiles, err := filepath.Glob(filepath.Join(path, "*.tif"))
 	if err != nil {
 		log.Println("Error checking for TIFF files:", err)
 		return false
