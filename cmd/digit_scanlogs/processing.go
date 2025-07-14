@@ -41,7 +41,7 @@ func processingScanDirectory(scanDir string, dbQueries *database.Queries) error 
 	}
 	for _, project := range projects {
 		if project.IsDir() {
-			projectPath := fmt.Sprintf("%s/%s", scanDir, project.Name())
+			projectPath := filepath.Join(scanDir, project.Name())
 			if IsDigitProject(projectPath) {
 				metadata, err := os.Stat(projectPath)
 				if err != nil {
