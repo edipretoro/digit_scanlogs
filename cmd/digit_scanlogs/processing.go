@@ -29,8 +29,8 @@ func IsDigitProject(projectPath string) bool {
 	return len(tiffFiles) > 0
 }
 
-func processProject(projectPath string) error {
-	fmt.Printf("Processing project at: %s\n", projectPath)
+func processProject(project database.Project) error {
+	fmt.Printf("Processing project at: %s\n", project.Name)
 	return nil
 }
 
