@@ -29,7 +29,7 @@ func IsDigitProject(projectPath string) bool {
 	return len(tiffFiles) > 0
 }
 
-func processProject(project database.Project) error {
+func processProject(project database.Project, dbQueries *database.Queries) error {
 	fmt.Printf("Processing project at: %s\n", project.Name)
 	return nil
 }
@@ -96,7 +96,7 @@ func processingScanDirectory(scanDir string, dbQueries *database.Queries) error 
 						return fmt.Errorf("failed to get project by path %s: %w", projectPath, err)
 					}
 				}
-				err = processProject(projectDb)
+				err = processProject(projectDb, dbQueries)
 				if err != nil {
 					return fmt.Errorf("failed to process project %s: %w", project.Name(), err)
 				}
