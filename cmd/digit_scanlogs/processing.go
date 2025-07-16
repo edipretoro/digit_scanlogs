@@ -2,8 +2,11 @@ package main
 
 import (
 	"context"
+	"crypto/sha512"
 	"database/sql"
+	"encoding/hex"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"os/user"
@@ -14,6 +17,21 @@ import (
 	"github.com/edipretoro/digit_scanlogs/internal/database"
 	"github.com/google/uuid"
 )
+
+func digestFile(dir string, file string) (string, error) {
+	f, err := os.Open(filepath.Join(dir, file))
+	if err != nil {
+		return "", fmt.Errorf("opening file for digesting: %s", err)
+	}
+	defer f.Close()
+
+	h := sha512.New()
+	if _, err := io.Copy(h, f); err != nil {
+		return "", fmt.Errorf("copying data for digesting: %s", err)
+	}
+
+	return hex.EncodeToString(h.Sum(nil)), nil
+}
 
 func IsDigitProject(projectPath string) bool {
 	path, err := filepath.Abs(projectPath)
