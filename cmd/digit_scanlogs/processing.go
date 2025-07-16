@@ -61,37 +61,9 @@ func processingScanDirectory(scanDir string, dbQueries *database.Queries) error 
 		if project.IsDir() {
 			projectPath := filepath.Join(scanDir, project.Name())
 			if IsDigitProject(projectPath) {
-				metadata, err := os.Stat(projectPath)
+				userDb, err := GetUserFromPath(projectPath, dbQueries)
 				if err != nil {
-					return fmt.Errorf("failed to get metadata for project %s: %w", project.Name(), err)
-				}
-				metadataStat := metadata.Sys().(*syscall.Stat_t)
-				fmt.Printf("Found Digit project: %s\n", project.Name())
-				fmt.Printf("Project metadata: UID=%d, GID=%d, Size=%d bytes\n", metadataStat.Uid, metadataStat.Gid, metadata.Size())
-				userUid := strconv.FormatUint(uint64(metadataStat.Uid), 10)
-				user, err := user.LookupId(userUid)
-				if err != nil {
-					return fmt.Errorf("failed to lookup user for UID %d: %w", metadataStat.Uid, err)
-				}
-				var userDb database.User
-				userDb, err = dbQueries.GetUserByUID(context.Background(), int64(metadataStat.Uid))
-				if err != nil {
-					if err == sql.ErrNoRows {
-						userDb, err = dbQueries.CreateUser(
-							context.Background(),
-							database.CreateUserParams{
-								ID:       uuid.NewString(),
-								Uid:      int64(metadataStat.Uid),
-								Username: user.Username,
-								Fullname: user.Name,
-							},
-						)
-						if err != nil {
-							return fmt.Errorf("failed to create user in database: %w", err)
-						}
-					} else {
-						return fmt.Errorf("failed to get user by UID %d: %w", metadataStat.Uid, err)
-					}
+					return fmt.Errorf("failed to get user from project path %s: %w", projectPath, err)
 				}
 				var projectDb database.Project
 				projectDb, err = dbQueries.GetProjectByPath(context.Background(), projectPath)
