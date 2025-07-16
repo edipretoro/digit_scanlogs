@@ -111,7 +111,7 @@ func processingScanDirectory(scanDir string, dbQueries *database.Queries) error 
 				if IsDigitProject(projectPath) {
 					userDb, err := GetUserFromPath(projectPath, dbQueries)
 					if err != nil {
-						log.Fatalf("failed to get user from project path %s: %w", projectPath, err)
+						log.Fatalf("failed to get user from project path %s: %v", projectPath, err)
 					}
 					var projectDb database.Project
 					projectDb, err = dbQueries.GetProjectByPath(context.Background(), projectPath)
@@ -128,15 +128,15 @@ func processingScanDirectory(scanDir string, dbQueries *database.Queries) error 
 								},
 							)
 							if err != nil {
-								log.Fatalf("failed to create project in database: %w", err)
+								log.Fatalf("failed to create project in database: %v", err)
 							}
 						} else {
-							log.Fatalf("failed to get project by path %s: %w", projectPath, err)
+							log.Fatalf("failed to get project by path %s: %v", projectPath, err)
 						}
 					}
 					err = processProject(projectDb, dbQueries)
 					if err != nil {
-						log.Fatalf("failed to process project %s: %w", project.Name(), err)
+						log.Fatalf("failed to process project %s: %v", project.Name(), err)
 					}
 				}
 				wg.Done()
