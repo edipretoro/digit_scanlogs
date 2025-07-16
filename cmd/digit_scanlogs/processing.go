@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sync"
 
 	"github.com/edipretoro/digit_scanlogs/internal/database"
 	"github.com/google/uuid"
@@ -97,45 +98,51 @@ func processProject(project database.Project, dbQueries *database.Queries) error
 }
 
 func processingScanDirectory(scanDir string, dbQueries *database.Queries) error {
+	wg := &sync.WaitGroup{}
 	projects, err := os.ReadDir(scanDir)
 	if err != nil {
 		return fmt.Errorf("failed to read scan directory: %w", err)
 	}
 	for _, project := range projects {
 		if project.IsDir() {
-			projectPath := filepath.Join(scanDir, project.Name())
-			if IsDigitProject(projectPath) {
-				userDb, err := GetUserFromPath(projectPath, dbQueries)
-				if err != nil {
-					return fmt.Errorf("failed to get user from project path %s: %w", projectPath, err)
-				}
-				var projectDb database.Project
-				projectDb, err = dbQueries.GetProjectByPath(context.Background(), projectPath)
-				if err != nil {
-					if err == sql.ErrNoRows {
-						projectDb, err = dbQueries.CreateProject(
-							context.Background(),
-							database.CreateProjectParams{
-								ID:          uuid.NewString(),
-								Name:        project.Name(),
-								Path:        projectPath,
-								Description: sql.NullString{},
-								CreatedBy:   userDb.Uid,
-							},
-						)
-						if err != nil {
-							return fmt.Errorf("failed to create project in database: %w", err)
+			wg.Add(1)
+			go func() {
+				projectPath := filepath.Join(scanDir, project.Name())
+				if IsDigitProject(projectPath) {
+					userDb, err := GetUserFromPath(projectPath, dbQueries)
+					if err != nil {
+						log.Fatalf("failed to get user from project path %s: %w", projectPath, err)
+					}
+					var projectDb database.Project
+					projectDb, err = dbQueries.GetProjectByPath(context.Background(), projectPath)
+					if err != nil {
+						if err == sql.ErrNoRows {
+							projectDb, err = dbQueries.CreateProject(
+								context.Background(),
+								database.CreateProjectParams{
+									ID:          uuid.NewString(),
+									Name:        project.Name(),
+									Path:        projectPath,
+									Description: sql.NullString{},
+									CreatedBy:   userDb.Uid,
+								},
+							)
+							if err != nil {
+								log.Fatalf("failed to create project in database: %w", err)
+							}
+						} else {
+							log.Fatalf("failed to get project by path %s: %w", projectPath, err)
 						}
-					} else {
-						return fmt.Errorf("failed to get project by path %s: %w", projectPath, err)
+					}
+					err = processProject(projectDb, dbQueries)
+					if err != nil {
+						log.Fatalf("failed to process project %s: %w", project.Name(), err)
 					}
 				}
-				err = processProject(projectDb, dbQueries)
-				if err != nil {
-					return fmt.Errorf("failed to process project %s: %w", project.Name(), err)
-				}
-			}
+				wg.Done()
+			}()
 		}
 	}
+	wg.Wait()
 	return nil
 }
