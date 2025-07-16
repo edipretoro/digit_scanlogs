@@ -45,7 +45,54 @@ func IsDigitProject(projectPath string) bool {
 }
 
 func processProject(project database.Project, dbQueries *database.Queries) error {
-	fmt.Printf("Processing project at: %s\n", project.Name)
+	files, err := os.ReadDir(project.Path)
+	if err != nil {
+		return fmt.Errorf("failed to read project directory: %w", err)
+	}
+	for _, file := range files {
+		if file.IsDir() {
+			continue // Skip directories for now
+		}
+		metadata, err := os.Stat(filepath.Join(project.Path, file.Name()))
+		if err != nil {
+			return fmt.Errorf("failed to get metadata for file %s: %w", file.Name(), err)
+		}
+		var fileDb database.File
+		sha512Digest, err := digestFile(project.Path, file.Name())
+		if err != nil {
+			return fmt.Errorf("failed to digest file %s: %w", file.Name(), err)
+		}
+		userDb, err := GetUserFromPath(filepath.Join(project.Path, file.Name()), dbQueries)
+		if err != nil {
+			return fmt.Errorf("failed to get user from file path %s: %w", filepath.Join(project.Path, file.Name()), err)
+		}
+		fileDb, err = dbQueries.GetFileByPath(context.Background(), filepath.Join(project.Path, file.Name()))
+		if err != nil {
+			if err == sql.ErrNoRows {
+				fileDb, err = dbQueries.CreateFile(
+					context.Background(),
+					database.CreateFileParams{
+						ID:          uuid.NewString(),
+						Name:        file.Name(),
+						ProjectID:   project.ID,
+						UserID:      userDb.Uid,
+						Path:        filepath.Join(project.Path, file.Name()),
+						Size:        metadata.Size(),
+						Mode:        metadata.Mode().String(),
+						Modtime:     metadata.ModTime(),
+						Sha512:      sha512Digest,
+						Description: sql.NullString{},
+					},
+				)
+				if err != nil {
+					return fmt.Errorf("failed to create file in database: %w", err)
+				}
+			} else {
+				return fmt.Errorf("failed to get file by path %s: %w", filepath.Join(project.Path, file.Name()), err)
+			}
+		}
+		fmt.Printf("Processed file: %s, Size: %d bytes, User: %s\n", fileDb.Name, fileDb.Size, userDb.Username)
+	}
 	return nil
 }
 
