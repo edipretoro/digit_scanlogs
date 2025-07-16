@@ -9,10 +9,7 @@ import (
 	"io"
 	"log"
 	"os"
-	"os/user"
 	"path/filepath"
-	"strconv"
-	"syscall"
 
 	"github.com/edipretoro/digit_scanlogs/internal/database"
 	"github.com/google/uuid"
