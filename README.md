@@ -6,6 +6,43 @@ A Go application for tracking and monitoring digitized document projects. This t
 
 `digit_scanlogs` helps manage large collections of digitized documents by maintaining a comprehensive database of files, their metadata, and cryptographic checksums. The tool automatically tracks file ownership, project organization, and file integrity across Unix-like systems and Windows.
 
+## Quick Start
+
+After creating a `.env` configuration file, run the scanner:
+
+```bash
+./digitscanlogs
+```
+
+You'll see output indicating the scanning progress and any new files added to the database.
+
+```
+2025/10/06 09:44:41 Scanning directory: /Users/edipretoro/Documents/uccle_plans
+Processed file: tiled_new.mets, Size: 0 bytes, User: edipretoro
+Processed file: tiled_new.tif, Size: 0 bytes, User: edipretoro
+Processed file: Multi_page24bpp.tif, Size: 73904 bytes, User: edipretoro
+Processed file: maps-0001.tif, Size: 0 bytes, User: edipretoro
+Processed file: maps-0002.tif, Size: 66467136 bytes, User: edipretoro
+Processed file: maps-0003.tif, Size: 58995120 bytes, User: edipretoro
+Processed file: maps-0004.tif, Size: 57176274 bytes, User: edipretoro
+Processed file: maps-0005.tif, Size: 427624520 bytes, User: edipretoro
+Processed file: maps-0006.tif, Size: 585797116 bytes, User: edipretoro
+Processed file: maps-0007.tif, Size: 761670446 bytes, User: edipretoro
+Processed file: maps-0008.tif, Size: 253361396 bytes, User: edipretoro
+Processed file: maps-0009.tif, Size: 248018006 bytes, User: edipretoro
+Processed file: maps-0010.tif, Size: 1027629220 bytes, User: edipretoro
+Processed file: maps-0011.tif, Size: 436567162 bytes, User: edipretoro
+Processed file: maps-0012.tif, Size: 347819862 bytes, User: edipretoro
+Processed file: maps-0013.tif, Size: 335843694 bytes, User: edipretoro
+Processed file: maps-0014.tif, Size: 428148082 bytes, User: edipretoro
+Processed file: maps-0015.tif, Size: 350271034 bytes, User: edipretoro
+Processed file: maps-0016.tif, Size: 593535604 bytes, User: edipretoro
+Processed file: maps-0017.tif, Size: 582819160 bytes, User: edipretoro
+Processed file: maps-0018.tif, Size: 478254420 bytes, User: edipretoro
+Processed file: tiled.mets, Size: 0 bytes, User: edipretoro
+2025/10/06 09:44:45 Scan directory processed successfully
+```
+
 ### Key Features
 
 - **Automatic Project Detection**: Identifies digitizing projects by looking for `.mets` files
