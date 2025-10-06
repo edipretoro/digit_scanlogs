@@ -2,6 +2,16 @@
 
 A Go application for tracking and monitoring digitized document projects. This tool scans directories containing digitizing projects, catalogs files, computes SHA-512 checksums for integrity verification, and maintains a SQLite database of all scanned documents.
 
+## Motivation
+
+This tool was developed to efficiently track and monitor digitizing projects over time in a professional work environment. Managing large collections of digitized documents requires systematic oversight to ensure data integrity, track progress, and maintain organized records across multiple projects. By automating the cataloging process and providing cryptographic verification through SHA-512 checksums, this application enables teams to:
+
+- **Monitor project progress**: Track the evolution of digitization efforts by maintaining historical records of file additions and modifications
+- **Ensure data integrity**: Detect file corruption or unauthorized changes through cryptographic hash verification
+- **Maintain organizational structure**: Systematically catalog files across different projects and users
+- **Facilitate collaboration**: Provide a centralized database that team members can query to understand project status and file locations
+- **Support quality assurance**: Enable verification workflows by maintaining comprehensive metadata about all digitized assets
+
 ## Overview
 
 `digit_scanlogs` helps manage large collections of digitized documents by maintaining a comprehensive database of files, their metadata, and cryptographic checksums. The tool automatically tracks file ownership, project organization, and file integrity across Unix-like systems and Windows.
