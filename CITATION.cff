@@ -1,0 +1,11 @@
+y# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 0.1.0
+title: digitscanlogs
+message: A Go application for tracking and monitoring digitized document projects. This tool scans directories containing digitizing projects, catalogs files, computes SHA-512 checksums for integrity verification, and maintains a SQLite database of all scanned documents.
+type: software
+authors:
+  - given-names: Emmanuel
+    family-names: Di Pretoro
+    email: edipretoro@gmail.com
